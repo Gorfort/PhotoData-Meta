@@ -54,7 +54,7 @@ namespace PhotoV1
                 // Check if the dropped file is an image
                 if (IsImageFile(currentFilePath))
                 {
-                    // Optionally, display the image in panel1 (you can create a PictureBox)
+                    // Optionally, display the image in panel1
                     DisplayImageInPanel1(currentFilePath);
 
                     // Get metadata of the image and display it in panel2
@@ -68,14 +68,14 @@ namespace PhotoV1
             }
         }
 
-        // Helper: Check if the file is an image (optional, based on extension)
+        // Helper: Check if the file is an image
         private bool IsImageFile(string filePath)
         {
             string extension = Path.GetExtension(filePath).ToLower();
             return extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".bmp" || extension == ".gif" || extension == ".tiff";
         }
 
-        // Helper: Display the image in panel1 (optional, you can modify how it is displayed)
+        // Helper: Display the image in panel1
         private void DisplayImageInPanel1(string filePath)
         {
             // Load the image
@@ -105,7 +105,7 @@ namespace PhotoV1
             {
                 Multiline = true,
                 Dock = DockStyle.Fill,
-                ReadOnly = true,
+                ReadOnly = false, // Make it editable
                 ScrollBars = ScrollBars.Vertical,
                 Text = metadata
             };
@@ -114,7 +114,7 @@ namespace PhotoV1
             panel2.Controls.Add(metadataTextBox);
         }
 
-        // Helper: Extract and return the image's metadata (ISO, Shutter Speed, Date Taken, Camera Model)
+        // Helper: Extract and return the image's metadata
         private string GetImageMetadata(string filePath)
         {
             StringBuilder metadataInfo = new StringBuilder();
@@ -137,7 +137,7 @@ namespace PhotoV1
                         if (property.Id == 0x010F)
                         {
                             string manufacturer = Encoding.ASCII.GetString(property.Value).Trim('\0');
-                            metadataInfo.AppendLine($"      {manufacturer}");
+                            metadataInfo.AppendLine($"{manufacturer}");
                         }
 
                         // Camera Model (Property ID: 0x0110)
@@ -178,7 +178,6 @@ namespace PhotoV1
             return metadataInfo.ToString();
         }
 
-
         // This is where we overlay metadata onto the image and save it
         private void button1_Click(object sender, EventArgs e)
         {
@@ -193,8 +192,14 @@ namespace PhotoV1
                 // Load the image
                 using (Image image = Image.FromFile(currentFilePath))
                 {
+                    // Prepare to update metadata based on user edits
+                    UpdateImageMetadata(image);
+
+                    // Calculate frame thickness and font size based on image size
+                    int frameThickness = (int)(image.Width * 0.014);
+                    int fontSize = (int)(image.Width * 0.008);
+
                     // Create a new bitmap with a black frame
-                    int frameThickness = 20; // Thickness of the frame
                     Bitmap framedImage = new Bitmap(image.Width + frameThickness * 2, image.Height + frameThickness * 2);
 
                     using (Graphics g = Graphics.FromImage(framedImage))
@@ -206,30 +211,38 @@ namespace PhotoV1
                         g.DrawImage(image, new Rectangle(frameThickness, frameThickness, image.Width, image.Height));
 
                         // Set up font and brush for drawing metadata
-                        Font font = new Font("Arial", 10, FontStyle.Bold);
+                        Font font = new Font("Arial", fontSize, FontStyle.Bold);
                         Brush orangeBrush = new SolidBrush(Color.Orange);
 
-                        // Get the metadata
-                        string metadata = GetImageMetadata(currentFilePath);
-                        string metadataLine = string.Join(" ", metadata.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
-
-                        // Draw the metadata on the framed image
-                        int startX = frameThickness - 23; // Negative padding to move text inside the frame
-                        int startY = frameThickness - 18; // Negative padding to move text inside the frame
+                        // Get the updated metadata
+                        string updatedMetadata = GetUpdatedMetadata();
+                        string metadataLine = string.Join(" ", updatedMetadata.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
 
                         // Draw the metadata within the frame
+                        int startX = (int)(frameThickness * 0);
+                        int startY = (int)(frameThickness * 0.09);
+
+                        // Draw the metadata within the frame (at the top)
                         g.DrawString(metadataLine, font, orangeBrush, startX, startY);
                     }
 
-                    // Save the edited image to a new file, ensuring high quality
-                    string savePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "EditedImage.jpg");
-                    var jpegEncoder = GetEncoder(ImageFormat.Jpeg);
-                    var encoderParameters = new EncoderParameters(1);
-                    encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 100L); // Set quality to 100
+                    // Use SaveFileDialog to choose where to save the image
+                    using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                    {
+                        saveFileDialog.Filter = "JPEG Image|*.jpg;*.jpeg|PNG Image|*.png|BMP Image|*.bmp|GIF Image|*.gif|TIFF Image|*.tiff";
+                        saveFileDialog.Title = "Save the Image";
+                        saveFileDialog.FileName = $"{Path.GetFileNameWithoutExtension(currentFilePath)}_EXIF"; // Default file name
 
-                    framedImage.Save(savePath, jpegEncoder, encoderParameters);
+                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            // Save the edited image to the chosen file path, ensuring high quality
+                            var jpegEncoder = GetEncoder(ImageFormat.Jpeg);
+                            var encoderParameters = new EncoderParameters(1);
+                            encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 100L); // Set quality to 100
 
-                    MessageBox.Show($"Image saved with metadata at: {savePath}");
+                            framedImage.Save(saveFileDialog.FileName, jpegEncoder, encoderParameters);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -252,6 +265,49 @@ namespace PhotoV1
             return null;
         }
 
+        // Method to update metadata from the editable TextBox
+        private void UpdateImageMetadata(Image image)
+        {
+            string[] lines = GetUpdatedMetadata().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in lines)
+            {
+                // For example, if the line contains "ISO 200", you can parse and update accordingly
+                if (line.StartsWith("ISO"))
+                {
+                    // Example for ISO
+                    int isoValue;
+                    if (int.TryParse(line.Replace("ISO", "").Trim(), out isoValue))
+                    {
+                        // Create or update the PropertyItem for ISO (ID 0x8827)
+                        var isoProperty = CreatePropertyItem(0x8827, BitConverter.GetBytes((ushort)isoValue));
+                        image.SetPropertyItem(isoProperty);
+                    }
+                }
+                // You can similarly add other metadata updates based on the content of lines
+            }
+        }
+
+        // Method to get the updated metadata from the TextBox
+        private string GetUpdatedMetadata()
+        {
+            if (panel2.Controls.Count > 0 && panel2.Controls[0] is TextBox metadataTextBox)
+            {
+                return metadataTextBox.Text; // Get text from the TextBox
+            }
+            return string.Empty;
+        }
+
+        // Helper method to create a PropertyItem
+        private PropertyItem CreatePropertyItem(int id, byte[] value)
+        {
+            PropertyItem propertyItem = (PropertyItem)Activator.CreateInstance(typeof(PropertyItem), true);
+            propertyItem.Id = (ushort)id;
+            propertyItem.Type = 2; // ASCII
+            propertyItem.Len = value.Length;
+            propertyItem.Value = value;
+            return propertyItem;
+        }
+
         // These Paint events can be ignored or used for custom painting
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
@@ -260,5 +316,54 @@ namespace PhotoV1
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
         }
+
+        // Event handler for button2 to open an image
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tiff|All Files|*.*";
+                openFileDialog.Title = "Select an Image";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    currentFilePath = openFileDialog.FileName; // Store the path for use later
+
+                    // Check if the selected file is an image
+                    if (IsImageFile(currentFilePath))
+                    {
+                        // Display the image in panel1
+                        DisplayImageInPanel1(currentFilePath);
+
+                        // Get metadata of the image and display it in panel2
+                        string metadata = GetImageMetadata(currentFilePath);
+                        DisplayMetadataInPanel2(metadata);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please select a valid image file.", "Invalid File Type");
+                    }
+                }
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            // Remove the PictureBox (image) from panel1 if it exists
+            foreach (Control control in panel1.Controls)
+            {
+                if (control is PictureBox) // Check if the control is a PictureBox
+                {
+                    panel1.Controls.Remove(control); // Remove the PictureBox
+                    break; // Exit the loop after removing the first PictureBox found
+                }
+            }
+
+            // Clear all controls from panel2 to remove any displayed metadata
+            panel2.Controls.Clear(); // This will remove all metadata displays
+
+            // Reset currentFilePath to indicate no image is currently loaded
+            currentFilePath = string.Empty;
+        }
+
     }
 }

@@ -14,3 +14,4 @@ C:\Users\po44oov\Documents\GitHub\PhotoData-Meta\PhotoV1\PhotoV1\obj\Debug\net8.
 C:\Users\po44oov\Documents\GitHub\PhotoData-Meta\PhotoV1\PhotoV1\obj\Debug\net8.0-windows\PhotoV1.pdb
 C:\Users\po44oov\Documents\GitHub\PhotoData-Meta\PhotoV1\PhotoV1\obj\Debug\net8.0-windows\PhotoV1.genruntimeconfig.cache
 C:\Users\po44oov\Documents\GitHub\PhotoData-Meta\PhotoV1\PhotoV1\obj\Debug\net8.0-windows\ref\PhotoV1.dll
+C:\Users\po44oov\Documents\GitHub\PhotoData-Meta\PhotoV1\PhotoV1\obj\Debug\net8.0-windows\PhotoV1.sourcelink.json
