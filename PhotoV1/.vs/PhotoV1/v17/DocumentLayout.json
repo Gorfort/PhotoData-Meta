@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\po44oov\\Documents\\GitHub\\PhotoData-Meta\\PhotoV1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A422BAB9-954D-4C28-99F2-3F59CA9F6F8C}|PhotoV1\\PhotoV1.csproj|c:\\users\\po44oov\\documents\\github\\photodata-meta\\photov1\\photov1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{A422BAB9-954D-4C28-99F2-3F59CA9F6F8C}|PhotoV1\\PhotoV1.csproj|solutionrelative:photov1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A422BAB9-954D-4C28-99F2-3F59CA9F6F8C}|PhotoV1\\PhotoV1.csproj|c:\\users\\po44oov\\documents\\github\\photodata-meta\\photov1\\photov1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A422BAB9-954D-4C28-99F2-3F59CA9F6F8C}|PhotoV1\\PhotoV1.csproj|solutionrelative:photov1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A422BAB9-954D-4C28-99F2-3F59CA9F6F8C}|PhotoV1\\PhotoV1.csproj|c:\\users\\po44oov\\documents\\github\\photodata-meta\\photov1\\photov1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{A422BAB9-954D-4C28-99F2-3F59CA9F6F8C}|PhotoV1\\PhotoV1.csproj|solutionrelative:photov1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,11 +18,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Form1.cs [Conception]",
               "DocumentMoniker": "C:\\Users\\po44oov\\Documents\\GitHub\\PhotoData-Meta\\PhotoV1\\PhotoV1\\Form1.cs",
               "RelativeDocumentMoniker": "PhotoV1\\Form1.cs",
@@ -34,13 +34,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Users\\po44oov\\Documents\\GitHub\\PhotoData-Meta\\PhotoV1\\PhotoV1\\Form1.cs",
               "RelativeDocumentMoniker": "PhotoV1\\Form1.cs",
               "ToolTip": "C:\\Users\\po44oov\\Documents\\GitHub\\PhotoData-Meta\\PhotoV1\\PhotoV1\\Form1.cs",
               "RelativeToolTip": "PhotoV1\\Form1.cs",
-              "ViewState": "AQIAALYAAAAAAAAAAAAYwPIAAABmAAAA",
+              "ViewState": "AQIAAD0BAAAAAAAAAAAiwD8BAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-02T13:31:53.443Z",
               "EditorCaption": ""
